@@ -1,0 +1,59 @@
+---
+const { lessonId, title } = Astro.props;
+---
+<div class="lesson-tutor" data-lesson-tutor data-lesson-id={lessonId}>
+  <button class="tutor-launch" type="button" aria-expanded="false" aria-controls="lesson-tutor-panel"><span aria-hidden="true">✦</span> Помощник по уроку</button>
+  <section id="lesson-tutor-panel" class="tutor-panel" role="dialog" aria-labelledby="tutor-title" hidden>
+    <header class="tutor-header"><div><span class="tutor-kicker">РАЗБЕРЁМСЯ ВМЕСТЕ</span><h2 id="tutor-title">Помощник по уроку</h2></div><button type="button" class="tutor-close" aria-label="Закрыть помощника">✕</button></header>
+    <div class="tutor-context"><strong>{title}</strong><span>Объясняю тему и помогаю сделать свой следующий шаг. Готовые решения не выдаю.</span></div>
+    <div class="tutor-messages" role="log" aria-label="Разговор с помощником" aria-live="polite" aria-relevant="additions text"></div>
+    <div class="tutor-suggestions"><button type="button" data-question="Объясни простыми словами главное понятие этого урока.">Объясни тему</button><button type="button" data-question="Не понимаю, с чего начать задание. Помоги разобраться, не решая его за меня.">Помоги начать</button></div>
+    <form class="tutor-form">
+      <label class="tutor-question-label" for="tutor-question">Твой вопрос</label>
+      <textarea id="tutor-question" name="question" maxlength="2000" rows="3" placeholder="Какой момент остался непонятным?" required></textarea>
+      <div class="tutor-submit-row"><span class="tutor-status" role="status"></span><button class="tutor-send" type="submit">Спросить <span aria-hidden="true">↗</span></button></div>
+      <p class="tutor-note">Не отправляй пароли и личные данные. ИИ может ошибаться — сверяй объяснение с уроком. <a href="/privacy/#lesson-tutor">Как обрабатываются вопросы</a></p>
+    </form>
+  </section>
+</div>
+<script>
+ function setupTutor(){
+  const root=document.querySelector<HTMLElement>('[data-lesson-tutor]');if(!root||root.dataset.ready)return;root.dataset.ready='true';
+  const launch=root.querySelector<HTMLButtonElement>('.tutor-launch')!,panel=root.querySelector<HTMLElement>('.tutor-panel')!,close=root.querySelector<HTMLButtonElement>('.tutor-close')!;
+  const form=root.querySelector<HTMLFormElement>('form')!,input=root.querySelector<HTMLTextAreaElement>('textarea')!,send=root.querySelector<HTMLButtonElement>('.tutor-send')!,log=root.querySelector<HTMLElement>('.tutor-messages')!,status=root.querySelector<HTMLElement>('.tutor-status')!;
+  const lessonId=root.dataset.lessonId!;let csrf='',ready=false,busy=false,initializing=false;const lifecycle=new AbortController();
+  function bubble(role:string,text:string){const el=document.createElement('div');el.className='tutor-bubble '+(role==='user'?'tutor-user':'tutor-assistant');const label=document.createElement('strong');label.textContent=role==='user'?'Ты':'Помощник';const content=document.createElement('p');content.textContent=text;el.append(label,content);log.append(el);log.scrollTop=log.scrollHeight;return el;}
+  async function initialize(){if(ready||initializing)return;initializing=true;send.disabled=true;status.textContent='Подключаюсь…';
+   try{const response=await fetch('/api/tutor/session?lesson='+encodeURIComponent(lessonId),{signal:lifecycle.signal});const data=await response.json();if(!response.ok)throw Error(data.error||'Не удалось подключиться.');csrf=data.csrf;
+    log.replaceChildren();if(data.history.length)for(const message of data.history)bubble(message.role,message.content);else bubble('assistant','Привет! Здесь можно спросить о теме урока или о том, что не получается в задании. Будем разбираться небольшими шагами.');ready=true;status.textContent='';
+   }catch(error){if(!lifecycle.signal.aborted)status.textContent=error instanceof Error?error.message:'Помощник недоступен.';}finally{initializing=false;send.disabled=!ready;}
+  }
+  function hide(){panel.hidden=true;launch.setAttribute('aria-expanded','false');launch.focus();}
+  launch.addEventListener('click',()=>{const opening=panel.hidden;panel.hidden=!opening;launch.setAttribute('aria-expanded',String(opening));if(opening){initialize();input.focus();}});
+  close.addEventListener('click',hide);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden){event.stopPropagation();hide();}},{signal:lifecycle.signal});
+  root.querySelectorAll<HTMLButtonElement>('[data-question]').forEach(button=>button.addEventListener('click',()=>{input.value=button.dataset.question!;input.focus();}));
+  form.addEventListener('submit',async event=>{event.preventDefault();const message=input.value.trim();if(!message||busy)return;if(!ready){await initialize();if(!ready)return;}
+   busy=true;send.disabled=true;input.disabled=true;root.querySelectorAll<HTMLButtonElement>('[data-question]').forEach(b=>b.disabled=true);bubble('user',message);input.value='';status.textContent='Готовлю и проверяю объяснение…';
+   try{const response=await fetch('/api/tutor/chat',{method:'POST',headers:{'Content-Type':'application/json','X-Tutor-CSRF':csrf},body:JSON.stringify({lessonId,message}),signal:lifecycle.signal});const data=await response.json();if(!response.ok){input.value=message;if(response.status===403)ready=false;throw Error(data.error||'Не удалось получить подсказку.');}bubble('assistant',data.text);status.textContent='';}
+   catch(error){if(!lifecycle.signal.aborted){status.textContent='';bubble('assistant',error instanceof Error?error.message:'Связь прервалась. Попробуй позже.');}}
+   finally{busy=false;send.disabled=false;input.disabled=false;root.querySelectorAll<HTMLButtonElement>('[data-question]').forEach(b=>b.disabled=false);if(!panel.hidden&&!lifecycle.signal.aborted)input.focus();}
+  });
+  input.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();form.requestSubmit();}});
+  document.addEventListener('astro:before-swap',()=>lifecycle.abort(),{once:true,signal:lifecycle.signal});
+ }
+ setupTutor();document.addEventListener('astro:page-load',setupTutor);
+</script>
+<style>
+.lesson-tutor{--tutor-bg:#fff;--tutor-ink:#172033;--tutor-muted:#53627a;--tutor-border:#dbe3f0;--tutor-soft:#f2f5ff;--tutor-accent:#5145b8;position:fixed;right:24px;bottom:22px;z-index:70;font-family:inherit;color:var(--tutor-ink);font-size:14px;line-height:1.5}
+:global(.dark) .lesson-tutor{--tutor-bg:#111b2e;--tutor-ink:#e5edf9;--tutor-muted:#b5c2d8;--tutor-border:#34425d;--tutor-soft:#1b2943;--tutor-accent:#beb6ff}
+.tutor-launch{display:flex;gap:9px;align-items:center;background:#5145b8;color:white;border:1px solid #8075db;border-radius:99px;padding:14px 20px;font-weight:750;box-shadow:0 8px 30px #17104730;cursor:pointer;margin-left:auto}.tutor-launch span{font-size:21px}
+.tutor-panel{display:flex;flex-direction:column;width:420px;max-width:calc(100vw - 32px);height:min(740px,calc(100dvh - 110px));margin-bottom:14px;border:1px solid var(--tutor-border);border-radius:24px;background:var(--tutor-bg);box-shadow:0 16px 70px #0003;overflow:hidden;position:absolute;right:0;bottom:52px}
+.tutor-panel[hidden]{display:none!important}.tutor-header{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 12px;gap:12px}.tutor-kicker{font-size:10px;font-weight:800;letter-spacing:.11em;color:var(--tutor-accent)}.tutor-header h2{font-size:20px;line-height:1.3;margin:4px 0 0;font-weight:850;letter-spacing:-.025em}.tutor-close{cursor:pointer;border:1px solid var(--tutor-border);border-radius:12px;width:36px;height:36px;flex-shrink:0;background:var(--tutor-bg);color:var(--tutor-ink)}
+.tutor-context{margin:0 16px 10px;padding:12px 14px;background:var(--tutor-soft);border-radius:14px;font-size:12px}.tutor-context strong{display:block;margin-bottom:5px;font-weight:750}.tutor-context span{color:var(--tutor-muted)}
+.tutor-messages{min-height:90px;flex:1;overflow:auto;overscroll-behavior:contain;padding:8px 16px;display:flex;flex-direction:column;gap:12px}:global([data-lesson-tutor] .tutor-bubble){padding:13px 15px;border-radius:16px;background:var(--tutor-soft);max-width:94%;overflow-wrap:anywhere;flex-shrink:0}:global([data-lesson-tutor] .tutor-bubble strong){font-size:11px;color:var(--tutor-accent)}:global([data-lesson-tutor] .tutor-bubble p){margin:5px 0 0;white-space:pre-wrap;font-size:14px;line-height:1.65}:global([data-lesson-tutor] .tutor-user){align-self:flex-end;background:#5145b8;color:#fff}:global([data-lesson-tutor] .tutor-user strong){color:#e4e0ff}
+.tutor-suggestions{display:flex;gap:6px;padding:10px 16px 0;flex-wrap:wrap}.tutor-suggestions button{border:1px solid var(--tutor-border);border-radius:99px;background:var(--tutor-bg);padding:5px 10px;color:var(--tutor-accent);font-size:12px;cursor:pointer}
+.tutor-form{padding:12px 16px 14px;flex-shrink:0}.tutor-form label{display:block;color:var(--tutor-muted);font-size:11px;font-weight:700;margin-bottom:5px}.tutor-form textarea{display:block;box-sizing:border-box;width:100%;background:var(--tutor-bg);color:var(--tutor-ink);border:1px solid var(--tutor-border);border-radius:12px;padding:9px 10px;font:inherit;font-size:13px}.tutor-form textarea{resize:vertical;min-height:66px;max-height:160px}.tutor-form textarea::placeholder{color:var(--tutor-muted)}.tutor-question-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.tutor-submit-row{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:10px}.tutor-status{font-size:11px;line-height:1.4;color:var(--tutor-muted)}.tutor-send{padding:9px 15px;border-radius:12px;background:#5145b8;color:white;font-weight:750;cursor:pointer;white-space:nowrap}.tutor-note a{text-decoration:underline;color:inherit}.tutor-note{font-size:10px;color:var(--tutor-muted);margin:9px 0 0}.lesson-tutor button:disabled{opacity:.55;cursor:wait}.lesson-tutor :focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+@media(max-width:600px){.lesson-tutor{right:16px;bottom:14px}.tutor-panel{width:calc(100vw - 32px);height:calc(100dvh - 105px);max-height:760px;bottom:50px;border-radius:20px}.tutor-header{padding-top:14px}.tutor-context{font-size:11px}.tutor-form textarea{font-size:16px}.tutor-launch{padding:12px 17px;font-size:13px}}
+@media print{.lesson-tutor{display:none}}
+</style>

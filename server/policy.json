@@ -1,0 +1,405 @@
+{
+  "esp32-first-start": {
+    "concepts": "ESP32, USB-кабель данных, питание через USB, Arduino IDE, выбор платы и порта, компиляция, загрузка, setup(), loop(), Serial.begin, Serial.println, delay, миллисекунды, кавычки и скобки",
+    "prior": [
+      "arduino-ide-esp32"
+    ],
+    "exclude": "переменные и типы данных, static, millis, указатели, классы, массивы"
+  },
+  "cpp-variables": {
+    "concepts": "переменная, int, float, bool, char, String Arduino, const, имя и значение, инициализация, присваивание, арифметика, деление целых, сравнение, локальная и глобальная область видимости, время жизни, простой if/else, базовая структура скетча Arduino: setup() и loop(), однократное определение стандартной loop() без параметров, повторные вызовы loop()",
+    "prior": [
+      "esp32-first-start"
+    ],
+    "exclude": "static, double, размеры и диапазоны типов, uint8_t, constexpr, указатели, классы, массивы"
+  },
+  "led-basics": {
+    "concepts": "светодиод, полярность, анод, катод, резистор, GPIO, макетная плата, GND, безопасные 3.3 В, pinMode, OUTPUT, digitalWrite, HIGH, LOW, delay, мигание",
+    "prior": [
+      "esp32-first-start",
+      "cpp-variables"
+    ],
+    "exclude": "millis, PWM, ledc, for, while, массивы, указатели, классы"
+  },
+  "button-basics": {
+    "concepts": "кнопка, цифровой вход, INPUT, INPUT_PULLUP, подтяжка, плавающий вход, digitalRead, LOW/HIGH, if/else, нажатие, простой антидребезг",
+    "prior": [
+      "cpp-variables",
+      "led-basics"
+    ],
+    "exclude": "прерывания, классы, указатели, задачи FreeRTOS"
+  },
+  "millis-multitasking": {
+    "concepts": "millis(), unsigned long для времени, интервал, разность времени, неблокирующая проверка, несколько действий, пауза delay, состояния светодиода и кнопки",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "button-basics"
+    ],
+    "exclude": "FreeRTOS, аппаратные прерывания, многопоточность, классы"
+  },
+  "rgb-led-basics": {
+    "concepts": "RGB-светодиод, три канала, общий анод и катод, резисторы, смешение цветов, PWM и скважность, ledcAttach, ledcWrite, яркость",
+    "prior": [
+      "cpp-variables",
+      "led-basics"
+    ],
+    "exclude": "FreeRTOS, адресные ленты, DMA"
+  },
+  "potentiometer-basics": {
+    "concepts": "потенциометр, делитель напряжения, ADC/АЦП, analogRead, 0–4095, 3.3 В, изменение яркости, map, измерение входа",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "rgb-led-basics"
+    ],
+    "exclude": "ПИД, FFT, DMA"
+  },
+  "debugging-basics": {
+    "concepts": "диагностика питания, кабеля, порта, компиляции, загрузки, Serial Monitor, измерений, схема и контакты, минимальный опыт, различие программной и аппаратной ошибки",
+    "prior": [
+      "esp32-first-start",
+      "cpp-variables",
+      "led-basics",
+      "button-basics"
+    ],
+    "exclude": "JTAG, дампы памяти, FreeRTOS Потенциометр — расширение после урока 10: в базовой части не требовать."
+  },
+  "arduino-libraries": {
+    "concepts": "библиотека, include, менеджер библиотек, ZIP, зависимости, версии, примеры, DHT sensor library, DHT22, begin и чтение датчика, ошибки установки",
+    "prior": [
+      "esp32-first-start",
+      "cpp-variables",
+      "debugging-basics"
+    ],
+    "exclude": "PlatformIO, CMake, шаблоны C++, реализация классов"
+  },
+  "buzzer-piezo-element": {
+    "concepts": "пьезоэлемент, активный и пассивный зуммер, частота, длительность, нота, пауза, PWM, ledcWriteTone, безопасное подключение",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "rgb-led-basics"
+    ],
+    "exclude": "FFT, синтез речи, I2S"
+  },
+  "ultrasonic-sensor-hc-sr04": {
+    "concepts": "HC-SR04, эхолокация, Trig, Echo, импульс, pulseIn, время полёта туда-обратно, скорость звука, делитель для Echo 5 В на ESP32 3.3 В, тайм-аут",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "debugging-basics"
+    ],
+    "exclude": "фильтр Калмана, прерывания, FreeRTOS"
+  },
+  "dht-sensor-basics": {
+    "concepts": "DHT11, DHT22, температура, влажность, библиотека DHT, период опроса, readTemperature, readHumidity, NaN, ошибки датчика",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries"
+    ],
+    "exclude": "MQTT, Wi-Fi, фильтр Калмана"
+  },
+  "oled-display-ssd1306": {
+    "concepts": "SSD1306, OLED, I2C, SDA/SCL, адрес, сканер I2C, Wire, Adafruit_GFX, Adafruit_SSD1306, буфер экрана, clearDisplay, setCursor, print, display, простые графические примитивы",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries"
+    ],
+    "exclude": "SPI DMA, LVGL, FreeRTOS"
+  },
+  "sensor-calibration": {
+    "concepts": "шум измерений, эталон, калибровка, усреднение, порог, гистерезис, analogRead, повторяемость",
+    "prior": [
+      "cpp-variables",
+      "potentiometer-basics",
+      "debugging-basics"
+    ],
+    "exclude": "Калман, FFT, цифровые фильтры высокого порядка"
+  },
+  "servo-motor-basics": {
+    "concepts": "сервопривод, угол, PWM, ESP32Servo, attach, write, внешнее низковольтное питание, общая земля, диапазон движения",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries",
+      "rgb-led-basics"
+    ],
+    "exclude": "ПИД, кинематика манипулятора, FreeRTOS"
+  },
+  "relay-module": {
+    "concepts": "реле, электромагнит, COM/NO/NC, управляющий вход, активный LOW, кнопка, таймер, изолированный низковольтный стенд",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "button-basics",
+      "millis-multitasking"
+    ],
+    "exclude": "любые инструкции подключения к розетке и сети 220/230 В"
+  },
+  "ir-receiver": {
+    "concepts": "ИК-приёмник, пульт, IRremote, код кнопки, декодирование, повтор команды, управление светодиодом",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "arduino-libraries"
+    ],
+    "exclude": "создание ИК-протокола с нуля, прерывания вручную"
+  },
+  "stepper-motor-28byj48": {
+    "concepts": "28BYJ-48, ULN2003, шаги, обмотки, Stepper, направление, скорость, внешнее низковольтное питание, общая земля",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries"
+    ],
+    "exclude": "микрошаговые драйверы, станки CNC, сложная кинематика"
+  },
+  "keypad-4x4": {
+    "concepts": "матричная клавиатура, строки и столбцы, сканирование, Keypad, getKey, символ, строка ввода, PIN-код, ограничение длины, массив раскладки как готовая конфигурация",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries",
+      "button-basics"
+    ],
+    "exclude": "криптография, указатели, реализация сканирования на прерываниях"
+  },
+  "preferences-settings": {
+    "concepts": "Preferences, NVS, настройки после выключения, begin, get, put, явное сохранение, значение по умолчанию, ресурс flash",
+    "prior": [
+      "cpp-variables",
+      "button-basics"
+    ],
+    "exclude": "сырая flash-память, разделы ESP-IDF, файловые системы"
+  },
+  "wifi-connection": {
+    "concepts": "Wi-Fi 2.4 ГГц, SSID, пароль без раскрытия, WiFi.h, WiFi.begin, status, IP-адрес, переподключение, точка доступа",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries",
+      "millis-multitasking"
+    ],
+    "exclude": "взлом сетей, перехват паролей, маршрутизация провайдера"
+  },
+  "web-server-basics": {
+    "concepts": "браузер, HTTP-запрос и ответ, WebServer, маршрут URL, обработчик, server.on, send, handleClient, локальная сеть, управление светодиодом",
+    "prior": [
+      "cpp-variables",
+      "wifi-connection",
+      "led-basics"
+    ],
+    "exclude": "React, базы данных, облачный хостинг, XSS-инструкции"
+  },
+  "ntp-clock-oled": {
+    "concepts": "NTP, время, часовой пояс, configTime, getLocalTime, OLED, формат вывода часов, синхронизация",
+    "prior": [
+      "cpp-variables",
+      "wifi-connection",
+      "oled-display-ssd1306"
+    ],
+    "exclude": "устройство NTP-пакетов, атомные часы на уровне физики"
+  },
+  "mqtt-basics": {
+    "concepts": "MQTT, брокер, клиент, топик, publish/subscribe, PubSubClient, подключение, сообщения, MQTT Explorer, уникальный clientId",
+    "prior": [
+      "cpp-variables",
+      "wifi-connection",
+      "dht-sensor-basics"
+    ],
+    "exclude": "кластеризация брокеров, сложные TLS-настройки, Kubernetes"
+  },
+  "telegram-bot-fastbot2": {
+    "concepts": "мессенджер-бот, BotFather, токен без передачи в чат, FastBot2_Muratism, ZIP, setHost, прокси из урока, обработчик сообщения, разрешённый chatId, управление платой",
+    "prior": [
+      "cpp-variables",
+      "wifi-connection",
+      "arduino-libraries",
+      "led-basics"
+    ],
+    "exclude": "создание прокси-сервера, извлечение токенов, массовая рассылка"
+  },
+  "esp32-n8n-webhook": {
+    "concepts": "n8n, webhook, HTTP POST, JSON, автоматизация, статус ответа, HTTPS, подготовка учебного сценария, поля сообщения",
+    "prior": [
+      "cpp-variables",
+      "wifi-connection",
+      "web-server-basics"
+    ],
+    "exclude": "самостоятельное администрирование облака, доступ к чужим сервисам"
+  },
+  "mqtt-security": {
+    "concepts": "MQTT через TLS, сертификат CA, проверка сервера, отдельные учётные записи, ACL топиков, WiFiClientSecure, время для сертификатов",
+    "prior": [
+      "cpp-variables",
+      "mqtt-basics",
+      "wifi-connection",
+      "ntp-clock-oled"
+    ],
+    "exclude": "атаки на TLS, отключение проверки сертификата как рабочее решение"
+  },
+  "mqtt-smart-home": {
+    "concepts": "две ESP32, метеостанция и умная розетка низкого напряжения, MQTT-топики, состояния, автоматизация по порогу, Last Will, переподключение",
+    "prior": [
+      "cpp-variables",
+      "mqtt-basics",
+      "dht-sensor-basics",
+      "relay-module",
+      "mqtt-security"
+    ],
+    "exclude": "работа с сетью 220/230 В, облачная инфраструктура вне урока"
+  },
+  "deep-sleep-weather": {
+    "concepts": "deep sleep, пробуждение таймером, измерение, отчёт, энергопотребление, период работы, повторный setup, автономная метеостанция",
+    "prior": [
+      "cpp-variables",
+      "dht-sensor-basics",
+      "preferences-settings"
+    ],
+    "exclude": "проектирование литиевых зарядных устройств, пайка аккумуляторов"
+  },
+  "platformio-vscode": {
+    "concepts": "VS Code, PlatformIO, platformio.ini, src/main.cpp, Arduino.h, зависимости, ESP32/C3/S3, конфигурации, монитор порта, сборка, загрузка, модульные тесты, JSON-телеметрия",
+    "prior": [
+      "cpp-variables",
+      "arduino-libraries",
+      "oled-display-ssd1306",
+      "dht-sensor-basics",
+      "wifi-connection"
+    ],
+    "exclude": "сборка toolchain с нуля, сложные шаблоны C++, Kubernetes"
+  },
+  "interrupts-timer-events": {
+    "concepts": "Опрос и событие; Что именно мы считаем; Короткий обработчик; Делим события на обороты; attachInterrupt(4, onEdge, FALLING); volatile; portMUX_TYPE; snapshot; elapsed = now - lastReport",
+    "prior": [
+      "button-basics",
+      "millis-multitasking"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "addressable-led-ws2812b": {
+    "concepts": "У каждого пикселя есть номер; DIN — вход, DOUT — продолжение; Цвет сначала живёт в памяти; Питание и сигнал — разные задачи; Adafruit_NeoPixel strip(8,18,…); setBrightness(32); setPixelColor(0, color); clear() и show(); ColorHSV(hue); gamma32()",
+    "prior": [
+      "rgb-led-basics"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "analog-joystick": {
+    "concepts": "Две оси и одна кнопка; Центр надо измерить; Сглаживание и deadzone; Радиальная зона; analogRead(34); analogReadResolution(12); centerX / centerY; filtered += (raw-filtered)*0.25; normalizeAxis(); DEADZONE = 0.10",
+    "prior": [
+      "potentiometer-basics",
+      "button-basics"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "rotary-encoder": {
+    "concepts": "Энкодер не потенциометр; Две дорожки со сдвигом; Щелчок и электрический цикл; Дребезг и таблица переходов; A/CLK и B/DT; state = a*2+b; CHANGE; transitions[old*4+new]; quarterSteps; stableButton",
+    "prior": [
+      "interrupts-timer-events",
+      "oled-display-ssd1306"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "dc-motor-driver": {
+    "concepts": "Зачем нужен H-мост; Четыре состояния DRV8833; ШИМ задаёт среднюю подачу энергии; DRV8833 и L298N; AIN1 / AIN2; ledcAttach(16,5000,8); ledcWrite(pin,duty); Coast / выбег; Brake / тормоз; phase",
+    "prior": [
+      "rgb-led-basics",
+      "millis-multitasking"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "esp-now-communication": {
+    "concepts": "Без роутера, но с Wi-Fi-радио; Один канал и правильный адрес; Шесть понятных байтов; Принято в очередь не значит выполнено; receiverMAC; CHANNEL = 1; esp_now_recv_info_t; xQueueOverwrite(); receivedAt; ACK",
+    "prior": [
+      "wifi-connection",
+      "dc-motor-driver"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "bluetooth-ble-control": {
+    "concepts": "Поиск и подключение; Служба и характеристика; UUID — адрес внутри GATT; Протокол должен совпадать; Peripheral / Central; GATT server / client; PROPERTY_WRITE; onWrite(); xQueueOverwrite(); lastCommand",
+    "prior": [
+      "led-basics",
+      "dc-motor-driver"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "web-littlefs-websockets": {
+    "concepts": "Прошивка и файлы — разные разделы; Три файла интерфейса; HTTP сначала, WebSocket затем; Короткие сообщения; LittleFS.begin(false); ALLOW_FORMAT; serveStatic(); WebSocketsServer(81); socketServer.loop(); broadcastTXT(); new WebSocket(…)",
+    "prior": [
+      "web-server-basics",
+      "potentiometer-basics"
+    ],
+    "exclude": "Не требовать продвинутого расширения для зачёта базового опыта; не обещать аппаратную проверку по успешной компиляции; не подменять протоколы или распиновку другой библиотеки/платы."
+  },
+  "telegram-buttons-fastbot2": {
+    "concepts": "FastBot2_Muratism 1.2.9, setHost, fb::Menu, setMenu, removeKeyboard, нижняя клавиатура и обычный текст, fb::InlineMenu, setInlineMenu, callback_data, u.isQuery, query data/id/from/message, answerCallbackQuery, TextEdit, editText, кнопка-ссылка, проверка владельца, GPIO 23 и ledOn",
+    "prior": [
+      "telegram-bot-fastbot2",
+      "led-basics"
+    ],
+    "exclude": "inline mode, Web Apps, платежи, OTA, FreeRTOS, продвинутые JSON-билдеры"
+  },
+  "telegram-files-fastbot2": {
+    "concepts": "FastBot2_Muratism 1.2.9, fb::File, document, caption, sendFile, CSV, String.length, байты и UTF-8, RAM и LittleFS, File, file_id и file_unique_id, hasDocument, downloadFile, Fetcher, ограниченный буфер, проверка владельца/имени/размера, полный приём и временный файл, Reset, LittleFS.begin(false)",
+    "prior": [
+      "telegram-bot-fastbot2",
+      "telegram-buttons-fastbot2",
+      "web-littlefs-websockets"
+    ],
+    "exclude": "OTA, запуск кода из файла, прошивка по сети, потоковое видео, сложная арифметика указателей, облачное хранение секретов"
+  },
+  "arduino-ide-esp32": {
+    "concepts": "Arduino IDE 2.x, установка среды, пакет esp32 by Espressif Systems 3.3.5, официальный индекс пакетов, Preferences, Boards Manager, ESP32 Dev Module для WROOM, USB-кабель данных, USB-UART, CP210x/CH340, модель платы и порт, Verify/Upload/Save, Serial Monitor 115200, BOOT/EN при Connecting, результат ESP32 READY",
+    "prior": [],
+    "exclude": "детальное программирование C++, переменные, Wi-Fi, токены, внешние библиотеки, датчики, сложная настройка PlatformIO, системное администрирование"
+  },
+  "photoresistor-basics": {
+    "concepts": "двухвыводной фоторезистор LDR без модуля и компаратора, делитель 3V3 → LDR → S(GPIO34) → 10 кОм → GND, при свете отсчёт растёт, analogRead 0–4095 не люксы, измерение диапазонов, внешний LED GPIO25 через 330 Ом, порог, усреднение 16 отсчётов, гистерезис ON_BELOW < OFF_ABOVE, millis",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "millis-multitasking",
+      "potentiometer-basics"
+    ],
+    "exclude": "модуль LM393, цифровой DO, калиброванный люксметр без эталона, фотодиодный трансимпедансный усилитель, FFT, DMA"
+  },
+  "cpp-control-flow": {
+    "concepts": "условие if, else if, else, операторы сравнения ==, !=, >, <, >=, <=, логические && и ||, цикл for, счётчик i, i++, i--, массив, номер ячейки с нуля, граница массива, while как краткая справка, своя функция, параметры, return, void, передача массива и его длины в функцию, float, Serial.print и Serial.println",
+    "prior": [
+      "esp32-first-start",
+      "cpp-variables"
+    ],
+    "exclude": "указатели, классы, структуры, многомерные массивы, рекурсия, шаблоны, динамическая память, String-методы"
+  },
+  "state-machine": {
+    "concepts": "конечный автомат, состояние, переход, событие, поведение в состоянии, переменная mode, именованные константы MODE_OFF и другие, цепочка if / else if, нажатие кнопки как событие, неблокирующее мигание через millis, антидребезг, диаграмма состояний, функция printMode, расширение: switch/case, остаток от деления %, setMode, переход по времени modeStart",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "button-basics",
+      "millis-multitasking"
+    ],
+    "exclude": "enum class, классы, указатели, таблицы переходов, массивы функций, FreeRTOS, прерывания"
+  },
+  "project-work": {
+    "concepts": "идея проекта, формула «для кого, что, зачем», техническое задание, проверяемые критерии готовности, минимальная работающая версия, план по этапам, каркас программы вход решение выход отчёт, функции readInputs decide applyOutputs report, самопроверка при старте, журнал событий, журнал испытаний, защита проекта, критерии оценивания",
+    "prior": [
+      "cpp-variables",
+      "led-basics",
+      "button-basics",
+      "millis-multitasking",
+      "debugging-basics"
+    ],
+    "exclude": "классы, указатели, FreeRTOS, сложные библиотеки, облачные сервисы"
+  },
+  "robot-car-project": {
+    "concepts": "машинка на двух моторах, драйвер DRV8833 два канала, дифференциальный привод, смешивание хода и поворота left = y + x right = y - x, ШИМ мотора, минимальный ШИМ, плавный разгон, мгновенная остановка, датчик HC-SR04 и делитель на Echo, автомат состояний вперёд назад поворот, ESP-NOW пульт на джойстике, пакет из семи байт, фильтр по MAC-адресу, аварийная остановка при потере связи, остановка перед препятствием",
+    "prior": [
+      "dc-motor-driver",
+      "analog-joystick",
+      "ultrasonic-sensor-hc-sr04",
+      "esp-now-communication",
+      "state-machine",
+      "project-work"
+    ],
+    "exclude": "ПИД-регулятор, энкодеры колёс, одометрия, SLAM, камера, FreeRTOS-задачи"
+  }
+}

@@ -1,0 +1,20 @@
+# Secrets & Private Configs
+credentials.json
+*.key
+*.pem
+.env
+.env.*
+
+# Quota & Runtime State
+usage.json
+*.log
+
+# Build & Test Artifacts
+node_modules/
+dist/
+output/
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,26 @@
+{
+  "name": "vibe-boards-ai-tutor",
+  "version": "1.0.0",
+  "description": "Curriculum-grounded Socratic AI Tutor engine for hardware & C++ education (ESP32)",
+  "type": "module",
+  "main": "server/server.mjs",
+  "scripts": {
+    "start": "node server/server.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [
+    "ai-tutor",
+    "socratic-method",
+    "education",
+    "esp32",
+    "cpp",
+    "curriculum-grounded",
+    "guardrails",
+    "llm-pipeline"
+  ],
+  "author": "Myrat Myradov",
+  "license": "MIT",
+  "devDependencies": {
+    "cheerio": "^1.0.0"
+  }
+}

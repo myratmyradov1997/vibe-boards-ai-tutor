@@ -1,0 +1,11 @@
+{
+  "endpoint": "https://api.commandcode.ai/provider/v1/chat/completions",
+  "apiKey": "COMMANDCODE_KEY",
+  "tutorModel": "deepseek/deepseek-v4.1-flash",
+  "reviewerModel": "deepseek/deepseek-v4.1-flash",
+  "jev": {
+    "apiKey": "OPENROUTER_KEY",
+    "endpoint": "https://openrouter.ai/api/alpha/decisions",
+    "model": "~typesafe/jev-latest"
+  }
+}

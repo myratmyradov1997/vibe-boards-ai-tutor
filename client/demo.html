@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socratic Lesson Tutor — Live Demo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --tutor-bg: #ffffff;
+      --tutor-ink: #172033;
+      --tutor-muted: #53627a;
+      --tutor-border: #dbe3f0;
+      --tutor-soft: #f2f5ff;
+      --tutor-accent: #5145b8;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 680px;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    h1 { margin-top: 0; font-size: 26px; }
+    p { line-height: 1.6; color: var(--muted); }
+    .badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .code-box {
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      color: #38bdf8;
+    }
+    /* Tutor Widget Styles */
+    .lesson-tutor {
+      --tutor-bg: #fff;
+      --tutor-ink: #172033;
+      --tutor-muted: #53627a;
+      --tutor-border: #dbe3f0;
+      --tutor-soft: #f2f5ff;
+      --tutor-accent: #5145b8;
+      position: fixed;
+      right: 24px;
+      bottom: 22px;
+      z-index: 70;
+      font-family: inherit;
+      color: var(--tutor-ink);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .tutor-launch {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      background: #5145b8;
+      color: white;
+      border: 1px solid #8075db;
+      border-radius: 99px;
+      padding: 14px 20px;
+      font-weight: 750;
+      box-shadow: 0 8px 30px rgba(23, 16, 71, 0.2);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .tutor-panel {
+      display: flex;
+      flex-direction: column;
+      width: 420px;
+      max-width: calc(100vw - 32px);
+      height: min(680px, calc(100vh - 100px));
+      border: 1px solid var(--tutor-border);
+      border-radius: 24px;
+      background: var(--tutor-bg);
+      box-shadow: 0 16px 70px rgba(0,0,0,0.25);
+      position: absolute;
+      right: 0;
+      bottom: 56px;
+      overflow: hidden;
+    }
+    .tutor-panel[hidden] { display: none !important; }
+    .tutor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px 12px;
+    }
+    .tutor-kicker { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--tutor-accent); }
+    .tutor-header h2 { font-size: 18px; margin: 4px 0 0; font-weight: 800; }
+    .tutor-close {
+      cursor: pointer;
+      border: 1px solid var(--tutor-border);
+      border-radius: 10px;
+      width: 32px;
+      height: 32px;
+      background: var(--tutor-bg);
+      color: var(--tutor-ink);
+    }
+    .tutor-context {
+      margin: 0 16px 10px;
+      padding: 10px 14px;
+      background: var(--tutor-soft);
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .tutor-context strong { display: block; margin-bottom: 3px; font-weight: 700; }
+    .tutor-context span { color: var(--tutor-muted); }
+    .tutor-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tutor-bubble {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--tutor-soft);
+      max-width: 90%;
+      word-break: break-word;
+    }
+    .tutor-bubble strong { font-size: 11px; color: var(--tutor-accent); display: block; }
+    .tutor-bubble p { margin: 4px 0 0; white-space: pre-wrap; font-size: 13.5px; line-height: 1.55; }
+    .tutor-user { align-self: flex-end; background: #5145b8; color: #fff; }
+    .tutor-user strong { color: #e4e0ff; }
+    .tutor-suggestions { display: flex; gap: 6px; padding: 10px 16px 0; flex-wrap: wrap; }
+    .tutor-suggestions button {
+      border: 1px solid var(--tutor-border);
+      border-radius: 99px;
+      background: var(--tutor-bg);
+      padding: 4px 10px;
+      color: var(--tutor-accent);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .tutor-form { padding: 12px 16px 14px; }
+    .tutor-form textarea {
+      width: 100%;
+      background: var(--tutor-bg);
+      color: var(--tutor-ink);
+      border: 1px solid var(--tutor-border);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font: inherit;
+      font-size: 13px;
+      resize: vertical;
+      min-height: 60px;
+      max-height: 140px;
+      box-sizing: border-box;
+    }
+    .tutor-submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .tutor-status { font-size: 11px; color: var(--tutor-muted); }
+    .tutor-send {
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: #5145b8;
+      color: white;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tutor-note { font-size: 10px; color: var(--tutor-muted); margin: 8px 0 0; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <span class="badge">Architecture Demo</span>
+    <h1>Socratic Lesson Tutor Demo</h1>
+    <p>This demo illustrates the frontend interface connecting to the standalone Socratic Tutor server API at <code>/api/tutor/</code>.</p>
+    <div class="code-box">
+Lesson: <strong>cpp-variables</strong> (Introduction to C++ Variables)<br>
+Target Hardware: ESP32-WROOM DevKit<br>
+Allowed Scope: int, float, bool, char, String, setup(), loop()<br>
+Excluded Scope: pointers, classes, FreeRTOS, hardware interrupts
+    </div>
+    <p>Click the <strong>✦ Lesson Tutor</strong> button in the bottom-right corner to interact with the pedagogical assistant.</p>
+  </div>
+
+  <div class="lesson-tutor" id="tutorRoot" data-lesson-id="cpp-variables">
+    <button class="tutor-launch" id="launchBtn" type="button" aria-expanded="false">
+      <span>✦</span> Lesson Tutor
+    </button>
+    <section id="panel" class="tutor-panel" hidden>
+      <header class="tutor-header">
+        <div>
+          <span class="tutor-kicker">SOCRATIC ASSISTANT</span>
+          <h2>Lesson Tutor</h2>
+        </div>
+        <button type="button" class="tutor-close" id="closeBtn">✕</button>
+      </header>
+      <div class="tutor-context">
+        <strong>Variables & Basic Types</strong>
+        <span>I explain concepts and guide your next step. I never give ready-made solutions.</span>
+      </div>
+      <div class="tutor-messages" id="messagesLog"></div>
+      <div class="tutor-suggestions">
+        <button type="button" class="suggestion-btn" data-q="Explain the main concept of this lesson in simple words.">Explain Concept</button>
+        <button type="button" class="suggestion-btn" data-q="I don't know where to start on the task. Guide me without solving it.">Help Me Start</button>
+      </div>
+      <form class="tutor-form" id="chatForm">
+        <textarea id="questionInput" maxlength="2000" rows="3" placeholder="What part is unclear?" required></textarea>
+        <div class="tutor-submit-row">
+          <span class="tutor-status" id="statusText"></span>
+          <button class="tutor-send" type="submit" id="sendBtn">Ask ↗</button>
+        </div>
+        <p class="tutor-note">Never send passwords or personal info. AI can make mistakes — always verify with the lesson material.</p>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    const launchBtn = document.getElementById('launchBtn');
+    const panel = document.getElementById('panel');
+    const closeBtn = document.getElementById('closeBtn');
+    const chatForm = document.getElementById('chatForm');
+    const input = document.getElementById('questionInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const log = document.getElementById('messagesLog');
+    const statusText = document.getElementById('statusText');
+    const lessonId = 'cpp-variables';
+
+    let csrf = '';
+    let ready = false;
+    let busy = false;
+
+    function addBubble(role, text) {
+      const el = document.createElement('div');
+      el.className = 'tutor-bubble ' + (role === 'user' ? 'tutor-user' : 'tutor-assistant');
+      const label = document.createElement('strong');
+      label.textContent = role === 'user' ? 'You' : 'Tutor';
+      const content = document.createElement('p');
+      content.textContent = text;
+      el.append(label, content);
+      log.append(el);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    async function initSession() {
+      if (ready) return;
+      statusText.textContent = 'Connecting...';
+      sendBtn.disabled = true;
+      try {
+        const res = await fetch('/api/tutor/session?lesson=' + encodeURIComponent(lessonId));
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to connect');
+        csrf = data.csrf;
+        ready = true;
+        statusText.textContent = '';
+        if (data.history && data.history.length) {
+          log.replaceChildren();
+          for (const msg of data.history) addBubble(msg.role, msg.content);
+        } else {
+          addBubble('assistant', 'Hi! You can ask about this lesson or where you feel stuck in the task. We will break it down together in small steps.');
+        }
+      } catch (err) {
+        statusText.textContent = err.message || 'Server unavailable';
+      } finally {
+        sendBtn.disabled = !ready;
+      }
+    }
+
+    launchBtn.addEventListener('click', () => {
+      const open = panel.hidden;
+      panel.hidden = !open;
+      launchBtn.setAttribute('aria-expanded', String(open));
+      if (open) {
+        initSession();
+        input.focus();
+      }
+    });
+
+    closeBtn.addEventListener('click', () => {
+      panel.hidden = true;
+      launchBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    document.querySelectorAll('.suggestion-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        input.value = b.dataset.q;
+        input.focus();
+      });
+    });
+
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = input.value.trim();
+      if (!msg || busy) return;
+      if (!ready) {
+        await initSession();
+        if (!ready) return;
+      }
+      busy = true;
+      sendBtn.disabled = true;
+      input.disabled = true;
+      addBubble('user', msg);
+      input.value = '';
+      statusText.textContent = 'Reviewing explanation...';
+      try {
+        const res = await fetch('/api/tutor/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Tutor-CSRF': csrf },
+          body: JSON.stringify({ lessonId, message: msg })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        addBubble('assistant', data.text);
+        statusText.textContent = '';
+      } catch (err) {
+        statusText.textContent = '';
+        addBubble('assistant', err.message || 'Connection lost. Try again.');
+      } finally {
+        busy = false;
+        sendBtn.disabled = false;
+        input.disabled = false;
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>
